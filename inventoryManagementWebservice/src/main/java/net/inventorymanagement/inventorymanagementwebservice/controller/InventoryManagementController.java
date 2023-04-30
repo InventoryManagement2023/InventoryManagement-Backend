@@ -297,6 +297,15 @@ public class InventoryManagementController {
             "\" hinzugefügt.";
     }
 
+    @PatchMapping(path = "department/member/{id}/reviewer")
+    public void updateReviewer(@PathVariable("id") Integer memberId,
+                               @RequestBody boolean reviewer) {
+        var member = inventoryManagementService.getDepartmentMemberByUserId(memberId);
+        member.setDroppingReviewer(reviewer);
+        inventoryManagementService.updateDepartmentMember(member);
+    }
+
+
     @DeleteMapping(path = "department/member/{id}")
     public String removeDepartmentMemberFromDepartment(@PathVariable("id") Integer departmentId,
                                                        @RequestBody Integer userId)
@@ -428,4 +437,5 @@ public class InventoryManagementController {
         return inventoryItems.stream().map(inventoryItemFacade::mapModelToDTO)
             .collect(Collectors.toList());
     }
+
 }
