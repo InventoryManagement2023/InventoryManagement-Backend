@@ -295,6 +295,10 @@ public class InventoryManagementService {
         return departmentMemberRepository.findByUserId(id);
     }
 
+    public void updateDepartmentMember(DepartmentMember member) {
+        departmentMemberRepository.save(member);
+    }
+
     public Department addDepartmentMemberToDepartment(Integer departmentId, Integer userId)
         throws Exception {
         Department department = departmentRepository.findByDepartmentId(departmentId);
