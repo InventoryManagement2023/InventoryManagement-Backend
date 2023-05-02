@@ -304,8 +304,6 @@ public class InventoryManagementController {
         member.setDroppingReviewer(reviewer);
         inventoryManagementService.updateDepartmentMember(member);
     }
-
-
     @DeleteMapping(path = "department/member/{id}")
     public String removeDepartmentMemberFromDepartment(@PathVariable("id") Integer departmentId,
                                                        @RequestBody Integer userId)
@@ -438,4 +436,9 @@ public class InventoryManagementController {
             .collect(Collectors.toList());
     }
 
+    // ####################### RememberMeCookieConfig #######################
+    @GetMapping(path = "remembermecookieconfig")
+    public RememberMeCookieConfig getRememberMeCookieConfig() {
+        return inventoryManagementService.getRememberMeCookieConfig();
+    }
 }

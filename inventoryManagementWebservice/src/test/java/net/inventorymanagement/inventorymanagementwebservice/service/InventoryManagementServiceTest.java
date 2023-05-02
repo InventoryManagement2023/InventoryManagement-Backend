@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import net.inventorymanagement.inventorymanagementwebservice.model.InventoryItem;
+import net.inventorymanagement.inventorymanagementwebservice.model.RememberMeCookieConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,5 +23,12 @@ class InventoryManagementServiceTest {
     public void shouldGetAllInventoryItems() {
         List<InventoryItem> allItems = inventoryManagementService.getAllInventoryItems();
         assertEquals(1, allItems.size());
+    }
+
+    @Test
+    public void rememberMeCookieConfigShouldHaveOneEntryWithADefaultDaysUntilExpiration() {
+        RememberMeCookieConfig rememberMeCookieConfigs = inventoryManagementService.getRememberMeCookieConfig();
+        assertEquals(1, rememberMeCookieConfigs.getId());
+        assertEquals(1, rememberMeCookieConfigs.getDaysUntilExpiration());
     }
 }
