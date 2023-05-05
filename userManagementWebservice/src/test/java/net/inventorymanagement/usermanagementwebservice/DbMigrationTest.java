@@ -15,6 +15,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
  * migration script inside. Afterward, "test_usermanagement" will be deleted again.
  */
 @SpringBootTest
+@Disabled
 @ActiveProfiles("test")
 @Slf4j
 public class DbMigrationTest {

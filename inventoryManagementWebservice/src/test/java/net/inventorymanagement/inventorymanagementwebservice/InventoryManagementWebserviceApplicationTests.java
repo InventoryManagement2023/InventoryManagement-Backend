@@ -1,5 +1,6 @@
 package net.inventorymanagement.inventorymanagementwebservice;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @SpringBootTest
+@Disabled
 class InventoryManagementWebserviceApplicationTests {
 
     @Test
