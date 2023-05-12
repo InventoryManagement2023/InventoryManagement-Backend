@@ -42,7 +42,7 @@ public class InventoryManagementService {
     @Autowired
     private ChangeRepository changeRepository;
     @Autowired
-    private RememberMeCookieConfigRepository rememberMeCookieConfigRepository;
+    private ConfigurationRepository configurationRepository;
 
     // ####################### Inventory #######################
 
@@ -521,13 +521,13 @@ public class InventoryManagementService {
         return chartItemList;
     }
 
-    // ####################### Charts #######################
-    public RememberMeCookieConfig getRememberMeCookieConfig() {
-        RememberMeCookieConfig activeRememberMeCookieConfigInDb = rememberMeCookieConfigRepository.findActiveRememberMeCookieConfig();
-        if (activeRememberMeCookieConfigInDb == null) {
-            // by default, cookie will expire after 1 day
-            return new RememberMeCookieConfig(1, 1);
+    // ####################### Configuration #######################
+    public Configuration getConfiguration() {
+        Configuration activeConfigurationInDb = configurationRepository.findActiveConfiguration();
+        if (activeConfigurationInDb == null) {
+            // create default configuration
+            return new Configuration(1, 1);
         }
-        return activeRememberMeCookieConfigInDb;
+        return activeConfigurationInDb;
     }
 }
