@@ -1,14 +1,8 @@
 package net.inventorymanagement.inventorymanagementwebservice.dtos;
 
-import net.inventorymanagement.inventorymanagementwebservice.model.Department;
-import net.inventorymanagement.inventorymanagementwebservice.model.Location;
-import net.inventorymanagement.inventorymanagementwebservice.model.Supplier;
-import net.inventorymanagement.inventorymanagementwebservice.model.Type;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-import java.time.LocalDateTime;
+import java.time.*;
+import lombok.*;
+import net.inventorymanagement.inventorymanagementwebservice.model.*;
 
 @Getter
 @Setter
@@ -34,13 +28,23 @@ public class InventoryItemDTO implements Comparable<InventoryItemDTO> {
     private String status;
     private LocalDateTime lastChangedDate;
     private boolean active;
+    private String droppingQueue;
     private Department department;
     private String oldItemNumber;
 
     public InventoryItemDTO() {
     }
 
-    public InventoryItemDTO(Integer id, String itemInternalNumber, Type type, String itemName, String serialNumber, Supplier supplier, Location location, Integer pieces, Integer piecesStored, Integer piecesIssued, Integer piecesDropped, String issuedTo, LocalDateTime deliveryDate, LocalDateTime issueDate, LocalDateTime droppingDate, String status, LocalDateTime lastChangedDate, boolean active, Department department, String oldItemNumber) {
+    public InventoryItemDTO(Integer id, String itemInternalNumber, Type type, String itemName,
+                            String serialNumber, Supplier supplier, Location location,
+                            Integer pieces,
+                            Integer piecesStored, Integer piecesIssued, Integer piecesDropped,
+                            String issuedTo,
+                            LocalDateTime deliveryDate, LocalDateTime issueDate,
+                            LocalDateTime droppingDate,
+                            String status, LocalDateTime lastChangedDate, boolean active,
+                            Department department,
+                            String oldItemNumber, String droppingQueue) {
         this.id = id;
         this.itemInternalNumber = itemInternalNumber;
         this.type = type;
@@ -61,6 +65,7 @@ public class InventoryItemDTO implements Comparable<InventoryItemDTO> {
         this.active = active;
         this.department = department;
         this.oldItemNumber = oldItemNumber;
+        this.droppingQueue = droppingQueue;
     }
 
     public InventoryItemDTO(InventoryItemDTO dto) {
@@ -85,6 +90,7 @@ public class InventoryItemDTO implements Comparable<InventoryItemDTO> {
         this.active = dto.isActive();
         this.department = dto.getDepartment();
         this.oldItemNumber = dto.getOldItemNumber();
+        this.droppingQueue = dto.getDroppingQueue();
     }
 
     @Override

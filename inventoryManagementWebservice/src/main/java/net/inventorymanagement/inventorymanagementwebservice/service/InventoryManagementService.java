@@ -65,7 +65,8 @@ public class InventoryManagementService {
             itemList.sort(Comparator.naturalOrder());
             return itemList;
         } else {
-            throw new Exception("Abteilung \"" + departmentId + "\" existiert nicht! Bitte die IT kontaktieren!");
+            throw new Exception(
+                "Abteilung \"" + departmentId + "\" existiert nicht! Bitte die IT kontaktieren!");
         }
     }
 
@@ -74,13 +75,38 @@ public class InventoryManagementService {
         return inventoryItemRepository.save(checkIfInventoryItemAlreadyExists(model));
     }
 
+    public InventoryItem setDroppingQueue(String id, String queue) throws Exception {
+        InventoryItem inventoryItemToDeactivate = getInventoryItemById(id);
+        if (inventoryItemToDeactivate.getDroppingQueue() != null && queue != null) {
+            throw new Exception(
+                "Der Inventargegenstand \"" + inventoryItemToDeactivate.getItemInternalNumber() +
+                    "\" ist bereits in der Queue.");
+        }
+        if (inventoryItemToDeactivate.getDroppingQueue() == null && queue == null) {
+            throw new Exception(
+                "Der Inventargegenstand \"" + inventoryItemToDeactivate.getItemInternalNumber() +
+                    "\" wurde bereits aus der Queue entfernt.");
+        }
+        inventoryItemToDeactivate.setDroppingQueue(queue);
+        return inventoryItemRepository.save(inventoryItemToDeactivate);
+
+    }
+
     public InventoryItem deactivateInventoryItem(String id) throws Exception {
         InventoryItem inventoryItemToDeactivate = getInventoryItemById(id);
-        if (inventoryItemToDeactivate.isActive()) {
-            inventoryItemToDeactivate.setActive(false);
-        } else {
-            throw new Exception("Der Inventargegenstand \"" + inventoryItemToDeactivate.getItemInternalNumber() + "\" ist bereits inaktiv gesetzt.");
+        if (!inventoryItemToDeactivate.isActive()) {
+            throw new Exception(
+                "Der Inventargegenstand \"" + inventoryItemToDeactivate.getItemInternalNumber() +
+                    "\" ist bereits inaktiv gesetzt.");
         }
+        if (!"Deaktivieren".equals(inventoryItemToDeactivate.getDroppingQueue())) {
+            throw new Exception("Für den Inventargegenstand \"" +
+                inventoryItemToDeactivate.getItemInternalNumber() +
+                "\" ist keine Deaktivierung angefordert.");
+        }
+        inventoryItemToDeactivate.setActive(false);
+        inventoryItemToDeactivate.setDroppingQueue(null);
+
         return inventoryItemRepository.save(inventoryItemToDeactivate);
     }
 
@@ -292,7 +318,15 @@ public class InventoryManagementService {
     }
 
     public DepartmentMember getDepartmentMemberByUserId(Integer id) {
-        return departmentMemberRepository.findByUserId(id);
+        var member = departmentMemberRepository.findByUserId(id);
+        if (!member.isDroppingReviewer()) {
+            var members = getAllDepartmentMembersFromDepartmentId(member.getDepartment().getId());
+            var count = members.stream().filter(DepartmentMember::isDroppingReviewer).count();
+            if (count <= 1) {
+                member.setDroppingReviewer(true);
+            }
+        }
+        return member;
     }
 
     public void updateDepartmentMember(DepartmentMember member) {

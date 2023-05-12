@@ -1,26 +1,20 @@
 package net.inventorymanagement.inventorymanagementwebservice.facades;
 
-import net.inventorymanagement.inventorymanagementwebservice.dtos.DetailInventoryItemDTO;
-import net.inventorymanagement.inventorymanagementwebservice.dtos.InventoryItemDTO;
-import net.inventorymanagement.inventorymanagementwebservice.model.*;
-import net.inventorymanagement.inventorymanagementwebservice.service.InventoryManagementService;
-import net.inventorymanagement.inventorymanagementwebservice.utils.StatusEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.nio.charset.*;
+import java.nio.file.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
+import java.util.*;
+import javax.imageio.*;
+import net.inventorymanagement.inventorymanagementwebservice.dtos.*;
+import net.inventorymanagement.inventorymanagementwebservice.model.*;
+import net.inventorymanagement.inventorymanagementwebservice.service.*;
+import net.inventorymanagement.inventorymanagementwebservice.utils.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
 @Component
 public class InventoryItemFacade {
@@ -47,8 +41,10 @@ public class InventoryItemFacade {
         inventoryItemDTO.setDroppingDate(model.getDroppingDate());
         inventoryItemDTO.setStatus(model.getStatus());
         inventoryItemDTO.setDepartment(model.getDepartment());
+        inventoryItemDTO.setDroppingQueue(model.getDroppingQueue());
         if (model.getChange() != null) {
-            model.getChange().stream().max(Comparator.comparing(Change::getChangeDate)).ifPresent(lastChange -> inventoryItemDTO.setLastChangedDate(lastChange.getChangeDate()));
+            model.getChange().stream().max(Comparator.comparing(Change::getChangeDate)).ifPresent(
+                lastChange -> inventoryItemDTO.setLastChangedDate(lastChange.getChangeDate()));
         }
         inventoryItemDTO.setActive(model.isActive());
         inventoryItemDTO.setOldItemNumber(model.getOldItemNumber());
@@ -58,7 +54,10 @@ public class InventoryItemFacade {
     public DetailInventoryItemDTO mapModelToDetailDTO(InventoryItem model) {
         InventoryItemDTO item = mapModelToDTO(model);
         List<Picture> base64List = parseBase64(model.getPictures());
-        return new DetailInventoryItemDTO(item, model.getDroppingReason(), model.getComments(), base64List, model.getChange());
+        return new DetailInventoryItemDTO(item, model.getDroppingReason(), model.getComments(),
+            base64List, model.getChange(), model.getDroppingQueuePieces(),
+            model.getDroppingQueueReason(), model.getDroppingQueueRequester(),
+            model.getDroppingQueueDate());
     }
 
     public InventoryItem mapDTOToModel(DetailInventoryItemDTO inventoryItemDTO, InventoryItem savedModel) {
@@ -91,6 +90,11 @@ public class InventoryItemFacade {
         inventoryItem.setStatus(createStatus(inventoryItemDTO));
         inventoryItem.setActive(true);
         inventoryItem.setOldItemNumber(inventoryItemDTO.getOldItemNumber());
+        inventoryItem.setDroppingQueue(inventoryItemDTO.getDroppingQueue());
+        inventoryItem.setDroppingQueueDate(inventoryItemDTO.getDroppingQueueDate());
+        inventoryItem.setDroppingQueuePieces(inventoryItemDTO.getDroppingQueuePieces());
+        inventoryItem.setDroppingQueueReason(inventoryItemDTO.getDroppingQueueReason());
+        inventoryItem.setDroppingQueueRequester(inventoryItemDTO.getDroppingQueueRequester());
         return inventoryItem;
     }
 
