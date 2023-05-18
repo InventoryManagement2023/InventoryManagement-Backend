@@ -1,6 +1,8 @@
 package net.inventorymanagement.usermanagementwebservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -16,6 +18,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements Comparable<User> {
 
     @Id
@@ -30,9 +34,7 @@ public class User implements Comparable<User> {
     private boolean superAdmin;
     private LocalDateTime lastLogin;
     private boolean active;
-
-    public User() {
-    }
+    private String token;
 
     public User(String firstName, String lastName, String mailAddress, Integer groupId, boolean teamLeader,
                 boolean admin, boolean superAdmin, LocalDateTime lastLogin, boolean active) {

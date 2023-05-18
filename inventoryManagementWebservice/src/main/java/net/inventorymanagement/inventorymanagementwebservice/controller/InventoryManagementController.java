@@ -436,9 +436,4 @@ public class InventoryManagementController {
             .collect(Collectors.toList());
     }
 
-    // ####################### RememberMeCookieConfig #######################
-    @GetMapping(path = "configuration")
-    public Configuration getConfiguration() {
-        return inventoryManagementService.getConfiguration();
-    }
 }

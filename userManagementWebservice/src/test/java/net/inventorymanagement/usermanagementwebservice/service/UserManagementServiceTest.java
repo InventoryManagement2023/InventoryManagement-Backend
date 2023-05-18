@@ -3,6 +3,7 @@ package net.inventorymanagement.usermanagementwebservice.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import net.inventorymanagement.usermanagementwebservice.model.Configuration;
 import net.inventorymanagement.usermanagementwebservice.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,27 @@ class UserManagementServiceTest {
     public void shouldGetAllData() {
         List<User> allItems = userManagementService.getAllData(1);
         assertEquals(1, allItems.size());
+    }
+
+    @Test
+    public void configurationShouldHaveOneEntryWithADefaultRememberMeCookieDaysUntilExpiration() {
+        Configuration configuration = userManagementService.getConfiguration();
+        assertEquals(1, configuration.getId());
+        assertEquals(1, configuration.getRememberMeCookieDaysUntilExpiration());
+    }
+
+    @Test
+    public void shouldGetUserIfTokenIsValid() {
+        User superAdmin = userManagementService.getOneData("Super_Admin", true);
+        String token = superAdmin.getToken();
+        User result = userManagementService.getUserByTokenIfNotExpired(token);
+        assertEquals(superAdmin.getId(), result.getId());
+        assertEquals(superAdmin.getToken(), result.getToken());
+    }
+
+    @Test
+    public void shouldGetNullIfTokenIsInvalid() {
+        User result = userManagementService.getUserByTokenIfNotExpired("2314234");
+        assertNull(result);
     }
 }

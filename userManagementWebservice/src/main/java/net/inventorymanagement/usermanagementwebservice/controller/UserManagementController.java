@@ -1,15 +1,16 @@
 package net.inventorymanagement.usermanagementwebservice.controller;
 
+import net.inventorymanagement.usermanagementwebservice.model.Configuration;
 import net.inventorymanagement.usermanagementwebservice.model.User;
 import net.inventorymanagement.usermanagementwebservice.service.UserManagementService;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -32,9 +33,10 @@ public class UserManagementController {
     // GET one user
     // data is additionally base64 encoded and has to be decoded manually
     @GetMapping(path = "user/{username}")
-    public User getData(@PathVariable("username") String encodedUsername) {
+    public User getData(@PathVariable("username") String encodedUsername,
+                        @RequestParam(value = "rememberMe", defaultValue = "false") boolean rememberMe) {
         byte[] decoded = Base64.decodeBase64(encodedUsername);
-        return userManagementService.getOneData(new String(decoded, StandardCharsets.UTF_8));
+        return userManagementService.getOneData(new String(decoded, StandardCharsets.UTF_8), rememberMe);
     }
 
     // GET team
@@ -47,6 +49,22 @@ public class UserManagementController {
     @GetMapping(path = "admin/{id}")
     public List<User> getAllData(@PathVariable("id") Integer id) {
         return userManagementService.getAllData(id);
+    }
+
+    // GET a user that has a valid token
+    @GetMapping(path = "user")
+    public User verifyTokenAndGetData(@RequestParam("token") String token) {
+        User user = userManagementService.getUserByTokenIfNotExpired(token);
+        if (user != null) {
+            return user;
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    }
+
+    // GET Configuration
+    @GetMapping(path = "configuration")
+    public Configuration getConfiguration() {
+        return userManagementService.getConfiguration();
     }
 
 }

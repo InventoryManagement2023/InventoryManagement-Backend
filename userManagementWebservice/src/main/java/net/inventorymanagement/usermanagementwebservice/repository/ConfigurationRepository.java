@@ -1,6 +1,6 @@
-package net.inventorymanagement.inventorymanagementwebservice.repositories;
+package net.inventorymanagement.usermanagementwebservice.repository;
 
-import net.inventorymanagement.inventorymanagementwebservice.model.Configuration;
+import net.inventorymanagement.usermanagementwebservice.model.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

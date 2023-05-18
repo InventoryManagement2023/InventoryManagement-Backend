@@ -1,4 +1,4 @@
-package net.inventorymanagement.inventorymanagementwebservice.model;
+package net.inventorymanagement.usermanagementwebservice.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

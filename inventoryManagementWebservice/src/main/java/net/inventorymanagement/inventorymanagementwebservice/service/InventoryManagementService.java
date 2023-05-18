@@ -41,8 +41,6 @@ public class InventoryManagementService {
 
     @Autowired
     private ChangeRepository changeRepository;
-    @Autowired
-    private ConfigurationRepository configurationRepository;
 
     // ####################### Inventory #######################
 
@@ -519,15 +517,5 @@ public class InventoryManagementService {
             }
         }
         return chartItemList;
-    }
-
-    // ####################### Configuration #######################
-    public Configuration getConfiguration() {
-        Configuration activeConfigurationInDb = configurationRepository.findActiveConfiguration();
-        if (activeConfigurationInDb == null) {
-            // create default configuration
-            return new Configuration(1, 1);
-        }
-        return activeConfigurationInDb;
     }
 }
