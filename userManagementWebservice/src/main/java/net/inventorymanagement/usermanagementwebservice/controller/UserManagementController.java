@@ -52,8 +52,8 @@ public class UserManagementController {
     }
 
     // GET a user that has a valid token
-    @GetMapping(path = "user")
-    public User verifyTokenAndGetData(@RequestParam("token") String token) {
+    @PostMapping(path = "user-token")
+    public User verifyTokenAndGetData(@RequestBody String token) {
         User user = userManagementService.getUserByTokenIfNotExpired(token);
         if (user != null) {
             return user;

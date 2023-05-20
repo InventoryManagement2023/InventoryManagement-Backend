@@ -7,6 +7,7 @@ import net.inventorymanagement.usermanagementwebservice.repository.Configuration
 import net.inventorymanagement.usermanagementwebservice.repository.UserManagementRepository;
 import net.inventorymanagement.usermanagementwebservice.utils.FileReader;
 import net.inventorymanagement.usermanagementwebservice.utils.Security;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,10 @@ public class UserManagementService {
             Date rememberMeExpirationDate = new Date();
             rememberMeExpirationDate.setTime(rememberMeExpirationDate.getTime() + getConfiguration().getRememberMeCookieDaysUntilExpiration() * 24 * 60 * 60 * 1000);
             Security.TokenEntity tokenEntity = new Security.TokenEntity(user.getId(), rememberMeExpirationDate);
-            String encryptedToken = security.encrypt(tokenEntity);
+            if (StringUtils.isEmpty(user.getTokenSalt())) {
+                user.setTokenSalt(UUID.randomUUID().toString());
+            }
+            String encryptedToken = security.encrypt(tokenEntity, user.getTokenSalt());
             if (encryptedToken != null) {
                 user.setToken(encryptedToken);
             } else {
@@ -160,7 +164,8 @@ public class UserManagementService {
         User user = userManagementRepository.findByToken(token);
         if (user != null) {
             String dbToken = user.getToken();
-            Security.TokenEntity tokenEntity = security.decrypt(dbToken);
+            String dbTokenSalt = user.getTokenSalt();
+            Security.TokenEntity tokenEntity = security.decrypt(dbToken, dbTokenSalt);
             if (tokenEntity != null && tokenEntity.getUserId().equals(user.getId()) && tokenEntity.getExpirationDate().after(new Date())) {
                 return user;
             }

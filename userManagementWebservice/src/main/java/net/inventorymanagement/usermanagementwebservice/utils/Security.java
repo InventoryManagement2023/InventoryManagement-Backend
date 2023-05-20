@@ -3,7 +3,8 @@ package net.inventorymanagement.usermanagementwebservice.utils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.jasypt.util.text.StrongTextEncryptor;
+import org.apache.commons.lang3.StringUtils;
+import org.jasypt.util.text.AES256TextEncryptor;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -11,20 +12,18 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Encryption with <a href="http://jasypt.org/">Jasypt</a> and {@link StrongTextEncryptor}
- * PBEWithMD5AndTripleDES and 1000 key obtention iterations
+ * Encryption with <a href="http://jasypt.org/">Jasypt</a> and {@link AES256TextEncryptor}
+ * PBEWithHMACSHA512AndAES_256 and 1000 key obtention iterations
  */
 @Slf4j
 public class Security {
 
-    private static final String CIPHER_KEY = "q!j?LVyGG4St$4ZbY44C";
-    private final StrongTextEncryptor encryptor = new StrongTextEncryptor();
-
-    public Security() {
-        encryptor.setPassword(CIPHER_KEY);
-    }
-
-    public String encrypt(Security.TokenEntity entity) {
+    public String encrypt(Security.TokenEntity entity, String tokenSalt) {
+        if (StringUtils.isEmpty(tokenSalt)) {
+            log.error("Unable to encrypt TokenEntity {} because token salt is null.", entity);
+            return null;
+        }
+        AES256TextEncryptor encryptor = initEncryptor(tokenSalt);
         try {
             if (entity.isValid()) {
                 return encryptor.encrypt(entity.toString());
@@ -35,7 +34,12 @@ public class Security {
         return null;
     }
 
-    public Security.TokenEntity decrypt(String encryptedToken) {
+    public Security.TokenEntity decrypt(String encryptedToken, String tokenSalt) {
+        if (StringUtils.isEmpty(tokenSalt)) {
+            log.error("Unable to decrypt token {} because token salt is null.", encryptedToken);
+            return null;
+        }
+        AES256TextEncryptor encryptor = initEncryptor(tokenSalt);
         try {
             String decryptedToken = encryptor.decrypt(encryptedToken);
             return new TokenEntity(decryptedToken);
@@ -43,6 +47,12 @@ public class Security {
             log.error("Unable to decrypt {}", encryptedToken, ex);
             return null;
         }
+    }
+
+    private AES256TextEncryptor initEncryptor(String password) {
+        AES256TextEncryptor encryptor = new AES256TextEncryptor();
+        encryptor.setPassword(password);
+        return encryptor;
     }
 
     @Getter

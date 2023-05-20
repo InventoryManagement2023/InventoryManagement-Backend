@@ -35,6 +35,7 @@ public class User implements Comparable<User> {
     private LocalDateTime lastLogin;
     private boolean active;
     private String token;
+    private String tokenSalt;
 
     public User(String firstName, String lastName, String mailAddress, Integer groupId, boolean teamLeader,
                 boolean admin, boolean superAdmin, LocalDateTime lastLogin, boolean active) {

@@ -35,6 +35,8 @@ class UserManagementServiceTest {
     @Test
     public void shouldGetUserIfTokenIsValid() {
         User superAdmin = userManagementService.getOneData("Super_Admin", true);
+        assertNotNull(superAdmin.getToken());
+        assertNotNull(superAdmin.getTokenSalt());
         String token = superAdmin.getToken();
         User result = userManagementService.getUserByTokenIfNotExpired(token);
         assertEquals(superAdmin.getId(), result.getId());

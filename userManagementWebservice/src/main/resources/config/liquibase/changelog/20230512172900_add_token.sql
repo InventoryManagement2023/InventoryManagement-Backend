@@ -1,1 +1,1 @@
-ALTER TABLE user ADD token varchar(500);
+ALTER TABLE user ADD token varchar(1000);
