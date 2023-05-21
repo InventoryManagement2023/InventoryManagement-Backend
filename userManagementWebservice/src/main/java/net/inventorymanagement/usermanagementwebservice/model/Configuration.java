@@ -1,4 +1,4 @@
-package net.inventorymanagement.inventorymanagementwebservice.model;
+package net.inventorymanagement.usermanagementwebservice.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,17 +11,17 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "remember_me_cookie_config")
+@Table(name = "configuration")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class RememberMeCookieConfig {
+public class Configuration {
 
     @Id
     private int id;
 
-    @Column(name = "days_until_expiration")
-    private int daysUntilExpiration;
+    @Column(name = "remember_me_cookie_days_until_expiration")
+    private int rememberMeCookieDaysUntilExpiration;
 }

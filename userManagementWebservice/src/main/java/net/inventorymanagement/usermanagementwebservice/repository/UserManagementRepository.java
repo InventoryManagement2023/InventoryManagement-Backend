@@ -20,4 +20,7 @@ public interface UserManagementRepository extends JpaRepository<User, Integer> {
     @Query(value = "SELECT * FROM user u WHERE u.group_id = :groupId", nativeQuery = true)
     List<User> findByGroupId(Integer groupId);
 
+    @Query(value = "SELECT * FROM user u WHERE u.token = :token", nativeQuery = true)
+    User findByToken(String token);
+
 }
