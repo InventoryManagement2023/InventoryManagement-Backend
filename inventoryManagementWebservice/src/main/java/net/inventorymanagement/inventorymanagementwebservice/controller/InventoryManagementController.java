@@ -91,6 +91,23 @@ public class InventoryManagementController {
         return item.getId();
     }
 
+    @GetMapping("inventory/export")
+    public List<InventoryItemDTO> export(@RequestParam(required = false) Integer departmentId, @RequestParam(required = false) Integer typeId, @RequestParam(required = false) Integer categoryId,
+                                         @RequestParam(required = false) Integer locationId, @RequestParam(required = false) Integer supplierId, @RequestParam(required = false) String status,
+                                         @RequestParam(required = false) LocalDateTime deliveryDateFrom, @RequestParam(required = false) LocalDateTime deliveryDateTo,
+                                         @RequestParam(required = false) LocalDateTime issueDateDateFrom, @RequestParam(required = false) LocalDateTime issueDateDateTo,
+                                         @RequestParam(required = false) LocalDateTime droppingDateDateFrom, @RequestParam(required = false) LocalDateTime droppingDateDateTo,
+                                         @RequestParam(required = false) LocalDateTime changeDateDateFrom, @RequestParam(required = false) LocalDateTime changeDateDateTo){
+        List<InventoryItem> inventoryItems =
+                inventoryItemRepository.findByOptionalParameters(departmentId, typeId, categoryId, locationId, supplierId, status,
+                        deliveryDateFrom, deliveryDateTo, issueDateDateFrom, issueDateDateTo,
+                        droppingDateDateFrom, droppingDateDateTo, changeDateDateFrom, changeDateDateTo);
+        return inventoryItems.stream()
+                .map(inventoryItemFacade::mapModelToDTO)
+                .collect(Collectors.toList());
+    }
+
+
     @PostMapping(path = "inventory")
     public InventoryItemDTO addInventoryItem(@RequestBody DetailInventoryItemDTO model)
         throws Exception {
