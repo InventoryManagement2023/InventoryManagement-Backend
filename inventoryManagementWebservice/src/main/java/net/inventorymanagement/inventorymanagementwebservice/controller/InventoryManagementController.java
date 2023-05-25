@@ -47,8 +47,8 @@ public class InventoryManagementController {
     @GetMapping(path = "inventory/droppingQueue")
     public List<InventoryItemDTO> getAllDroppingQueueInventoryItems() {
         List<InventoryItem> inventoryItems = inventoryManagementService.getAllInventoryItems();
-        return inventoryItems.stream().filter(InventoryItem::isDroppingQueue)
-            .map(inventoryItemFacade::mapModelToDTO)
+        return inventoryItems.stream().filter(x -> x.getDroppingQueue() != null)
+            .map(inventoryItemFacade::mapModelToDetailDTO)
             .collect(Collectors.toList());
     }
 
@@ -63,7 +63,7 @@ public class InventoryManagementController {
         @PathVariable("id") Integer departmentId) throws Exception {
         List<InventoryItem> inventoryItems =
             inventoryManagementService.getInventoryItemsByDepartmentId(departmentId);
-        return inventoryItems.stream().map(inventoryItemFacade::mapModelToDTO)
+        return inventoryItems.stream().map(inventoryItemFacade::mapModelToDetailDTO)
             .collect(Collectors.toList());
     }
 
@@ -72,7 +72,7 @@ public class InventoryManagementController {
         @PathVariable("id") Integer departmentId) throws Exception {
         List<InventoryItem> inventoryItems =
             inventoryManagementService.getInventoryItemsByDepartmentId(departmentId);
-        return inventoryItems.stream().filter(InventoryItem::isDroppingQueue)
+        return inventoryItems.stream().filter(x -> x.getDroppingQueue() != null)
             .map(inventoryItemFacade::mapModelToDTO)
             .collect(Collectors.toList());
     }
@@ -135,7 +135,7 @@ public class InventoryManagementController {
     }
 
     @PatchMapping("inventory/{id}/deactivate")
-    public InventoryItem deactivateInventoryItem(
+    public InventoryItem deactivateInventoryItemApprove(
         @RequestBody InventoryItemDTO inventoryItemDTO,
         @PathVariable String id) throws Exception {
         InventoryItem inventoryItem = inventoryManagementService.deactivateInventoryItem(id);

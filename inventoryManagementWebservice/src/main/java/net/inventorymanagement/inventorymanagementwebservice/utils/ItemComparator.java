@@ -1,8 +1,8 @@
 package net.inventorymanagement.inventorymanagementwebservice.utils;
 
-import net.inventorymanagement.inventorymanagementwebservice.model.InventoryItem;
-
-import java.time.LocalDate;
+import java.time.*;
+import java.util.*;
+import net.inventorymanagement.inventorymanagementwebservice.model.*;
 
 public class ItemComparator {
 
@@ -110,7 +110,8 @@ public class ItemComparator {
         }
         if (originalItem.getDroppingDate() != null && newItem.getDroppingDate() != null) {
             if (!originalItem.getDroppingDate().toLocalDate().isEqual(newItem.getDroppingDate().toLocalDate())) {
-                getDateString("Ausscheidedatum:", sb, originalItem.getIssueDate().toLocalDate(), newItem.getIssueDate().toLocalDate());
+                getDateString("Ausscheidedatum:", sb, originalItem.getDroppingDate().toLocalDate(),
+                    newItem.getDroppingDate().toLocalDate());
             }
         } else if (originalItem.getDroppingDate() != null) {
             getDateString("Ausscheidedatum:", sb, originalItem.getDroppingDate().toLocalDate(), null);
@@ -145,6 +146,29 @@ public class ItemComparator {
         if (pictureCounter > 0) {
             sb.append("Bilder / Dokumente hinzugefügt: {").append(pictureCounter).append("}  ");
         }
+
+        if (!Objects.equals(originalItem.getDroppingQueue(), newItem.getDroppingQueue())) {
+            if ("Ausscheiden".equals(newItem.getDroppingQueue())) {
+                sb.append("Ausscheiden angefordert: ");
+                sb.append("Stückzahl: {");
+                sb.append(newItem.getDroppingQueuePieces());
+                sb.append("}, ");
+                sb.append("Grund: {");
+                sb.append(newItem.getDroppingQueueReason());
+                sb.append("}, ");
+                sb.append("Datum: {");
+                sb.append(newItem.getDroppingQueueDate());
+                sb.append("}, ");
+            } else if ("Ausscheiden".equals(originalItem.getDroppingQueue()) &&
+                Objects.equals(originalItem.getPiecesDropped(), newItem.getPiecesDropped())) {
+                sb.append("Ausscheidung abgelehnt.  ");
+            } else if ("Deaktivieren".equals(newItem.getDroppingQueue())) {
+                sb.append("Deaktivierung angefordert.  ");
+            } else if ("Deaktivieren".equals(originalItem.getDroppingQueue())) {
+                sb.append("Deaktivierung abgelehnt.  ");
+            }
+        }
+
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 2);
         }

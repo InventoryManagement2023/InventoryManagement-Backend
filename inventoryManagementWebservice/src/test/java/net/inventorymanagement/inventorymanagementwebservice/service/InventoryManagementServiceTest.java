@@ -2,11 +2,11 @@ package net.inventorymanagement.inventorymanagementwebservice.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import net.inventorymanagement.inventorymanagementwebservice.model.InventoryItem;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import java.util.*;
+import net.inventorymanagement.inventorymanagementwebservice.model.*;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
 
 /**
  * Example Test to demonstrate that Liquibase sets up an in memory H2 database and fills it
@@ -24,4 +24,25 @@ class InventoryManagementServiceTest {
         assertEquals(1, allItems.size());
     }
 
+    @Test
+    public void shouldSetDroppingQueue() throws Exception {
+        var item = inventoryManagementService.setDroppingQueue("1", "Deaktivieren");
+        assertEquals("Deaktivieren", item.getDroppingQueue());
+        item = inventoryManagementService.setDroppingQueue("1", null);
+        assertNull(item.getDroppingQueue());
+    }
+
+    @Test
+    public void shouldSetDroppingQueueSecondTime() throws Exception {
+        var item = inventoryManagementService.setDroppingQueue("1", "Deaktivieren");
+        assertThrows(Exception.class,
+            () -> inventoryManagementService.setDroppingQueue("1", "Deaktivieren"));
+        item = inventoryManagementService.setDroppingQueue("1", null);
+        assertNull(item.getDroppingQueue());
+    }
+
+    @Test
+    public void shouldUnSetDroppingQueueSecondTime() throws Exception {
+        assertThrows(Exception.class, () -> inventoryManagementService.setDroppingQueue("1", null));
+    }
 }

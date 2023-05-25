@@ -66,7 +66,11 @@ public class InventoryItem implements Comparable<InventoryItem>, Cloneable {
     @ToString.Exclude
     private List<Change> change;
     private boolean active;
-    private boolean droppingQueue;
+    private String droppingQueue;
+    private Integer droppingQueuePieces;
+    private String droppingQueueReason;
+    private Integer droppingQueueRequester;
+    private LocalDateTime droppingQueueDate;
     @OneToOne
     @JoinColumn(name = "department_id")
     @IndexedEmbedded
