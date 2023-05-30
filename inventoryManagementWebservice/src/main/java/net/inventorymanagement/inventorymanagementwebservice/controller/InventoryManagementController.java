@@ -95,13 +95,13 @@ public class InventoryManagementController {
     public List<InventoryItemDTO> export(@RequestParam(required = false) Integer departmentId, @RequestParam(required = false) Integer typeId, @RequestParam(required = false) Integer categoryId,
                                          @RequestParam(required = false) Integer locationId, @RequestParam(required = false) Integer supplierId, @RequestParam(required = false) String status,
                                          @RequestParam(required = false) LocalDateTime deliveryDateFrom, @RequestParam(required = false) LocalDateTime deliveryDateTo,
-                                         @RequestParam(required = false) LocalDateTime issueDateDateFrom, @RequestParam(required = false) LocalDateTime issueDateDateTo,
-                                         @RequestParam(required = false) LocalDateTime droppingDateDateFrom, @RequestParam(required = false) LocalDateTime droppingDateDateTo,
-                                         @RequestParam(required = false) LocalDateTime changeDateDateFrom, @RequestParam(required = false) LocalDateTime changeDateDateTo){
+                                         @RequestParam(required = false) LocalDateTime issueDateFrom, @RequestParam(required = false) LocalDateTime issueDateTo,
+                                         @RequestParam(required = false) LocalDateTime droppingDateFrom, @RequestParam(required = false) LocalDateTime droppingDateTo,
+                                         @RequestParam(required = false) LocalDateTime changeDateFrom, @RequestParam(required = false) LocalDateTime changeDateTo){
         List<InventoryItem> inventoryItems =
                 inventoryItemRepository.findByOptionalParameters(departmentId, typeId, categoryId, locationId, supplierId, status,
-                        deliveryDateFrom, deliveryDateTo, issueDateDateFrom, issueDateDateTo,
-                        droppingDateDateFrom, droppingDateDateTo, changeDateDateFrom, changeDateDateTo);
+                        deliveryDateFrom, deliveryDateTo, issueDateFrom, issueDateTo,
+                        droppingDateFrom, droppingDateTo, changeDateFrom, changeDateTo);
         return inventoryItems.stream()
                 .map(inventoryItemFacade::mapModelToDTO)
                 .collect(Collectors.toList());
