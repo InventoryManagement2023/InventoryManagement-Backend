@@ -92,7 +92,7 @@ public class InventoryManagementController {
     }
 
     @GetMapping("inventory/export")
-    public List<InventoryItemDTO> export(@RequestParam(required = false) Integer departmentId, @RequestParam(required = false) Integer typeId, @RequestParam(required = false) Integer categoryId,
+    public byte[] export(@RequestParam(required = false) Integer departmentId, @RequestParam(required = false) Integer typeId, @RequestParam(required = false) Integer categoryId,
                                          @RequestParam(required = false) Integer locationId, @RequestParam(required = false) Integer supplierId, @RequestParam(required = false) String status,
                                          @RequestParam(required = false) LocalDateTime deliveryDateFrom, @RequestParam(required = false) LocalDateTime deliveryDateTo,
                                          @RequestParam(required = false) LocalDateTime issueDateFrom, @RequestParam(required = false) LocalDateTime issueDateTo,
@@ -102,9 +102,7 @@ public class InventoryManagementController {
                 inventoryItemRepository.findByOptionalParameters(departmentId, typeId, categoryId, locationId, supplierId, status,
                         deliveryDateFrom, deliveryDateTo, issueDateFrom, issueDateTo,
                         droppingDateFrom, droppingDateTo, changeDateFrom, changeDateTo);
-        return inventoryItems.stream()
-                .map(inventoryItemFacade::mapModelToDTO)
-                .collect(Collectors.toList());
+        return ExcelFileGenerator.generateFile(inventoryItems);
     }
 
 
