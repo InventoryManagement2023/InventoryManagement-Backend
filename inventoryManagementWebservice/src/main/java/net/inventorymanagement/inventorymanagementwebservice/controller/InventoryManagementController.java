@@ -256,6 +256,15 @@ public class InventoryManagementController {
         return "Lieferant \"" + supplier.getSupplierName() + "\" erfolgreich hinzugefügt.";
     }
 
+    // ####################### Pictures #######################
+    @GetMapping(path = "picture/{id}")
+    public Picture getPicture(@PathVariable("id") Integer pictureId) throws Exception {
+        var picture = inventoryManagementService.getPicture(pictureId);
+        if (picture == null) {
+            return null;
+        }
+        return inventoryItemFacade.parseBase64WithoutThumbnail(picture);
+    }
     // ####################### Department #######################
 
     @GetMapping(path = "department")

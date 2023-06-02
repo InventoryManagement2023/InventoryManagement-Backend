@@ -13,6 +13,7 @@ import net.inventorymanagement.inventorymanagementwebservice.dtos.*;
 import net.inventorymanagement.inventorymanagementwebservice.model.*;
 import net.inventorymanagement.inventorymanagementwebservice.service.*;
 import net.inventorymanagement.inventorymanagementwebservice.utils.*;
+import org.apache.commons.lang3.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -53,7 +54,7 @@ public class InventoryItemFacade {
 
     public DetailInventoryItemDTO mapModelToDetailDTO(InventoryItem model) {
         InventoryItemDTO item = mapModelToDTO(model);
-        List<Picture> base64List = parseBase64(model.getPictures());
+        List<Picture> base64List = parseBase64WithThumbnail(model.getPictures());
         return new DetailInventoryItemDTO(item, model.getDroppingReason(), model.getComments(),
             base64List, model.getChange(), model.getDroppingQueuePieces(),
             model.getDroppingQueueReason(), model.getDroppingQueueRequester(),
@@ -179,45 +180,81 @@ public class InventoryItemFacade {
         }
     }
 
-    public List<Picture> parseBase64(List<Picture> pictures) {
+    public List<Picture> parseBase64WithThumbnail(List<Picture> pictures) {
         return pictures.stream().map(picture -> {
             File f = new File(picture.getPictureUrl());
             String fileType = getFileType(picture.getPictureUrl());
             String imageString;
-            if (fileType.equals("pdf")) {
-                imageString = "data:application/pdf;base64,";
-            } else {
-                imageString = "data:image/" + fileType + ";base64,";
+            imageString = getBaseImageString(fileType);
+
+            if (StringUtils.isNotEmpty(picture.getThumbnailUrl())) {
+                f = new File(picture.getThumbnailUrl());
             }
 
-            try (FileInputStream fileInputStreamReader = new FileInputStream(f)) {
-
-                // get byte array from image stream
-                int bufLength = 2048;
-                byte[] buffer = new byte[2048];
-                byte[] data;
-
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                int readLength;
-                while ((readLength = fileInputStreamReader.read(buffer, 0, bufLength)) != -1) {
-                    out.write(buffer, 0, readLength);
-                }
-                data = out.toByteArray();
-                imageString += Base64.getEncoder().withoutPadding().encodeToString(data);
-
-                out.close();
-                fileInputStreamReader.close();
-                System.out.println("Encode Image Result : " + imageString);
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Picture pictureFinal = new Picture();
-            pictureFinal.setPictureUrl(imageString);
-            pictureFinal.setInventoryItem(picture.getInventoryItem());
-            pictureFinal.setId(picture.getId());
-            return pictureFinal;
+            return convertPicture(picture, f, imageString, true);
         }).toList();
+    }
+
+    private Picture convertPicture(Picture picture, File f, String imageString,
+                                   boolean useThumbnail) {
+        imageString = readFileBase64(f, imageString);
+        Picture pictureFinal = new Picture();
+
+        if (StringUtils.isNotEmpty(picture.getThumbnailUrl()) && useThumbnail) {
+            pictureFinal.setThumbnailUrl(imageString);
+        } else {
+            pictureFinal.setPictureUrl(imageString);
+        }
+        pictureFinal.setInventoryItem(picture.getInventoryItem());
+        pictureFinal.setId(picture.getId());
+        return pictureFinal;
+    }
+
+    private static String getBaseImageString(String fileType) {
+        String imageString;
+        if (fileType.equals("pdf")) {
+            imageString = "data:application/pdf;base64,";
+        } else {
+            imageString = "data:image/" + fileType + ";base64,";
+
+        }
+        return imageString;
+    }
+
+    public Picture parseBase64WithoutThumbnail(Picture picture) {
+
+        File f = new File(picture.getPictureUrl());
+        String fileType = getFileType(picture.getPictureUrl());
+        String imageString;
+
+        imageString = getBaseImageString(fileType);
+        return convertPicture(picture, f, imageString, false);
+    }
+
+    private String readFileBase64(File f, String imageString) {
+        try (FileInputStream fileInputStreamReader = new FileInputStream(f)) {
+
+            // get byte array from image stream
+            int bufLength = 2048;
+            byte[] buffer = new byte[2048];
+            byte[] data;
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int readLength;
+            while ((readLength = fileInputStreamReader.read(buffer, 0, bufLength)) != -1) {
+                out.write(buffer, 0, readLength);
+            }
+            data = out.toByteArray();
+            imageString += Base64.getEncoder().withoutPadding().encodeToString(data);
+
+            out.close();
+            fileInputStreamReader.close();
+            System.out.println("Encode Image Result : " + imageString);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return imageString;
     }
 
 }

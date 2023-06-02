@@ -269,11 +269,23 @@ public class InventoryManagementService {
     }
 
     private Supplier checkIfSupplierAlreadyExists(Supplier supplier) throws Exception {
-        Supplier supplierDuplicate = supplierRepository.findBySupplierName(supplier.getSupplierName());
+        Supplier supplierDuplicate =
+            supplierRepository.findBySupplierName(supplier.getSupplierName());
         if (supplierDuplicate != null) {
-            throw new Exception("Lieferant \"" + supplierDuplicate.getSupplierName() + "\" existiert bereits!");
+            throw new Exception(
+                "Lieferant \"" + supplierDuplicate.getSupplierName() + "\" existiert bereits!");
         }
         return supplier;
+    }
+
+    // ####################### Pictures #######################
+
+    public Picture getPicture(Integer id) {
+        var picture = pictureRepository.findById(id);
+        if (picture.isPresent()) {
+            return picture.get();
+        }
+        return null;
     }
 
     // ####################### Department #######################
