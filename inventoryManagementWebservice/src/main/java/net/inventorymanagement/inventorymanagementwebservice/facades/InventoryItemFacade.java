@@ -156,6 +156,10 @@ public class InventoryItemFacade {
                     try {
                         BufferedImage img = ImageIO.read(new ByteArrayInputStream(decodedImg));
                         ImageIO.write(img, fileEnding, f);
+                        String thumbnailFolder = "src/main/resources/thumbnails/" + item.getItemInternalNumber() + "/";
+                        Files.createDirectories(Path.of(thumbnailFolder));
+                        String thumbnailFile = new ThumbnailGenerator().generateThumbnail(f, thumbnailFolder);
+                        current.setThumbnailUrl(thumbnailFile);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
