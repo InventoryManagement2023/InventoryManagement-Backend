@@ -78,6 +78,11 @@ public class InventoryItem implements Comparable<InventoryItem>, Cloneable {
     @Field
     private String oldItemNumber;
 
+    public Change getLastChange(){
+        return this.change.stream().max(Comparator.comparing(Change::getChangeDate))
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
     public InventoryItem clone() throws CloneNotSupportedException {
         return (InventoryItem) super.clone();
     }
