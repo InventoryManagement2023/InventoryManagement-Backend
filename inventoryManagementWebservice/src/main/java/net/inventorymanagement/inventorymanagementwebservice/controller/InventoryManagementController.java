@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 import javax.ws.rs.*;
+
 import net.inventorymanagement.inventorymanagementwebservice.dtos.*;
 import net.inventorymanagement.inventorymanagementwebservice.facades.*;
 import net.inventorymanagement.inventorymanagementwebservice.model.*;
@@ -94,14 +95,49 @@ public class InventoryManagementController {
     @GetMapping("inventory/export")
     public byte[] export(@RequestParam(required = false) Integer departmentId, @RequestParam(required = false) Integer typeId, @RequestParam(required = false) Integer categoryId,
                          @RequestParam(required = false) Integer locationId, @RequestParam(required = false) Integer supplierId, @RequestParam(required = false) String status,
-                         @RequestParam(required = false) LocalDateTime deliveryDateFrom, @RequestParam(required = false) LocalDateTime deliveryDateTo,
-                         @RequestParam(required = false) LocalDateTime issueDateFrom, @RequestParam(required = false) LocalDateTime issueDateTo,
-                         @RequestParam(required = false) LocalDateTime droppingDateFrom, @RequestParam(required = false) LocalDateTime droppingDateTo,
-                         @RequestParam(required = false) LocalDateTime changeDateFrom, @RequestParam(required = false) LocalDateTime changeDateTo) {
+                         @RequestParam(required = false) String deliveryDateFrom, @RequestParam(required = false) String deliveryDateTo,
+                         @RequestParam(required = false) String issueDateFrom, @RequestParam(required = false) String issueDateTo,
+                         @RequestParam(required = false) String droppingDateFrom, @RequestParam(required = false) String droppingDateTo,
+                         @RequestParam(required = false) String changeDateFrom, @RequestParam(required = false) String changeDateTo) {
+        LocalDateTime deliveryDateFrom2 = null;
+        LocalDateTime deliveryDateTo2 = null;
+        LocalDateTime issueDateFrom2 = null;
+        LocalDateTime droppingDateFrom2 = null;
+        LocalDateTime changeDateFrom2 = null;
+        LocalDateTime issueDateTo2 = null;
+        LocalDateTime droppingDateTo2 = null;
+        LocalDateTime changeDateTo2 = null;
+
+        if (deliveryDateFrom != "" && deliveryDateFrom != null) {
+            deliveryDateFrom2 = LocalDateTime.parse(deliveryDateFrom.replace("Z", ""));
+        }
+        if (deliveryDateTo != "" && deliveryDateTo != null) {
+            deliveryDateTo2 = LocalDateTime.parse(deliveryDateTo.replace("Z", ""));
+        }
+        if (issueDateFrom != "" && issueDateFrom != null) {
+            issueDateFrom2 = LocalDateTime.parse(issueDateFrom.replace("Z", ""));
+        }
+        if (droppingDateFrom != "" && droppingDateFrom != null) {
+            droppingDateFrom2 = LocalDateTime.parse(droppingDateFrom.replace("Z", ""));
+        }
+        if (changeDateFrom != "" && changeDateFrom != null) {
+            changeDateFrom2 = LocalDateTime.parse(changeDateFrom.replace("Z", ""));
+        }
+        if (issueDateTo != "" && issueDateTo != null) {
+            issueDateTo2 = LocalDateTime.parse(issueDateTo.replace("Z", ""));
+        }
+        if (droppingDateTo != "" && droppingDateTo != null) {
+            droppingDateTo2 = LocalDateTime.parse(droppingDateTo.replace("Z", ""));
+        }
+        if (changeDateTo != "" && changeDateTo != null) {
+            String datum = changeDateTo.replace("Z", "");
+            datum = datum.replace("00:00:00", "23:59:59");
+            changeDateTo2 = LocalDateTime.parse(datum);
+        }
         List<InventoryItem> inventoryItems =
                 inventoryItemRepository.findByOptionalParameters(departmentId, typeId, categoryId, locationId, supplierId, status,
-                        deliveryDateFrom, deliveryDateTo, issueDateFrom, issueDateTo,
-                        droppingDateFrom, droppingDateTo, changeDateFrom, changeDateTo);
+                        deliveryDateFrom2, deliveryDateTo2, issueDateFrom2, issueDateTo2,
+                        droppingDateFrom2, droppingDateTo2, changeDateFrom2, changeDateTo2);
         return ExcelFileGenerator.generateFile(inventoryItems);
     }
 
