@@ -51,7 +51,7 @@ public class ThumbnailGeneratorTest {
         assertNotNull(thumbnailPath);
         File thumb = new File(thumbnailPath);
         assertTrue(thumb.exists());
-        assertImageIsLandscape(thumb);
+        assertImageHasExactMaxWidthAndHeight(thumb);
     }
 
     @Test
@@ -90,6 +90,12 @@ public class ThumbnailGeneratorTest {
         BufferedImage created = ImageIO.read(thumb);
         assertEquals(MAX_WIDTH, created.getWidth());
         assertTrue(created.getHeight() < MAX_WIDTH);
+    }
+
+    private void assertImageHasExactMaxWidthAndHeight(File thumb) throws Exception{
+        BufferedImage created = ImageIO.read(thumb);
+        assertEquals(MAX_WIDTH, created.getWidth());
+        assertEquals(MAX_HEIGHT, created.getHeight());
     }
 
     private String processFile(String filename) throws URISyntaxException {
